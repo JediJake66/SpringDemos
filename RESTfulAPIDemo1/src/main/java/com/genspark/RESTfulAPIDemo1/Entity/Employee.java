@@ -1,18 +1,27 @@
 package com.genspark.RESTfulAPIDemo1.Entity;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name="tbl_employees")
 public class Employee
 {
+    @Id
+    @Column(name="Employee_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int empId;
+    @Column(name="First_Name")
     private String name;
+    @Column(name="Salary")
     private String salary;
+    @Column(name="Job_Title")
     private String position;
 
     public Employee() {
 
     }
 
-    public Employee(int empId, String name, String salary, String position) {
-        this.empId = empId;
+    public Employee(String name, String salary, String position) {
         this.name = name;
         this.salary = salary;
         this.position = position;

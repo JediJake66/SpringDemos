@@ -1,72 +1,51 @@
 package com.genspark.RESTfulAPIDemo1.Service;
 
 import com.genspark.RESTfulAPIDemo1.Entity.Employee;
+import com.genspark.RESTfulAPIDemo1.Repo.EmployeeRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmpServImp implements EmpService {
 
-    List<Employee> empList;
-
-    public EmpServImp() {
-        empList = new ArrayList<>();
-        empList.add(new Employee(1,"Jake","$100,000","Director Of Operations"));
-        empList.add(new Employee(2,"Kevin","$85,000","Project Manager"));
-        empList.add(new Employee(3,"John","$55,000","Software Developer"));
-        empList.add(new Employee(4,"Jeff","$30,000","Intern"));
-    }
+    @Autowired
+    private EmployeeRepo empRepo;
 
     @Override
     public List<Employee> getAllEmps() {
-        return empList;
+        return this.empRepo.findAll();
     }
 
     @Override
     public Employee getEmpById(int empId) {
 
-        Employee e = null;
-        for(Employee emp: empList){
-            if(emp.getEmpId()==empId){
-                e=emp;
-                break;
-            }
+        Optional <Employee> e = this.empRepo.findById(empId);
+        Employee employee = null;
+        if(e.isPresent()){
+            employee=e.get();
+        }else{
+            throw new RuntimeException("Employee Not Found for ID: "+empId);
         }
-        return e;
+        return employee;
     }
 
     @Override
     public Employee addEmp(Employee emp) {
-        empList.add(emp);
-        return emp;
+        return this.empRepo.save(emp);
     }
 
     @Override
     public Employee updateEmp(Employee emp) {
-        String salary = emp.getSalary();
-        String position = emp.getPosition();
-        Employee e=null;
-        for(Employee employee: empList){
-            if(employee.getEmpId()==emp.getEmpId()){
-                employee.setSalary(salary);
-                employee.setPosition(position);
-                e=employee;
-                break;
-            }
-        }
-        return e;
+        return this.empRepo.save(emp);
     }
 
     @Override
     public String deleteEmp(int empId) {
-        for(Employee emp: empList){
-            if(emp.getEmpId()==empId){
-                empList.remove(emp);
-                break;
-            }
-        }
+        this.empRepo.deleteById(empId);
         return "Employee was successfully fired.";
     }
 
